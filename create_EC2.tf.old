@@ -1,0 +1,77 @@
+resource "aws_instance" "centos8" {
+  ami           = "ami-01ca03df4a6012157"
+  #count 	= 1
+  instance_type = "t2.micro" 
+  key_name  	= aws_key_pair.centos8_key.key_name
+  security_groups=[aws_security_group.allow_http_ssh.name]
+tags = {
+    Name = "centos8_VM"
+  }
+  connection {
+        type    = "ssh"
+        user    = "centos"
+        host    = aws_instance.centos8.public_ip
+        port    = 22
+        private_key = tls_private_key.centos8_private_key.private_key_pem
+    }
+  provisioner "remote-exec" {
+        inline = [
+         "curl -O https://staff.ambientia.fi/challenge-auditors/amb-user-henryh-1.0-2.noarch.rpm",
+         "curl -O https://staff.ambientia.fi/challenge-auditors/amb-user-jussiha-1.0-4.noarch.rpm",
+         "curl -O https://staff.ambientia.fi/challenge-auditors/amb-user-teroj-1.0-9.noarch.rpm",
+         "curl -O https://staff.ambientia.fi/challenge-auditors/amb-user-veikkos-1.0-6.noarch.rpm",
+         "sudo rpm -ivh *.rpm",
+         "sudo sed --in-place 's/^#\\s*\\(%wheel\\s\\+ALL=(ALL)\\s\\+NOPASSWD:\\s\\+ALL\\)/\\1/' /etc/sudoers",
+#	 "sudo yum update -y", 
+#	 "sudo dnf install https://download.docker.com/linux/centos/7/x86_64/stable/Packages/containerd.io-1.2.10-3.2.el7.x86_64.rpm -y",
+#	 "sudo dnf install docker-ce-stable --nobest -y",
+#	 "sudo systemctl start docker",
+ #        "sudo docker pull pradiptaroy/challenge-api",
+	]
+    }
+}
+#output "centos8-ip" {
+#  value = "${aws_instance.centos8.public_ip}"
+#}
+# create challenge-api container
+provider "docker" {
+#host = "ssh://centos@${aws_instance.centos8.public_dns}:22"
+#host = "ssh://centos8-ip:22"
+#registry_auth {
+ #   address = "https://hub.docker.com/repositories"
+#     address = "
+#repo=library/whatever; user="XXX"; password="XXX"; curl "https://registry-1.docker.io/v2/$repo/manifests/latest" -v -o/dev/null -L -s -X GET -H "Authorization: Bearer $(curl "https://auth.docker.io/token?service=registry.docker.io&scope=repository%3A$repo%3Apull
+  # username = "pradiptaroy"
+#   password = ""
+ # }
+}
+
+resource "docker_image" "challenge-api" {
+  name = "pradiptaroy/challenge-api"
+}
+
+#data "docker_registry_image" "challenge-api" {
+#  name = "pradiptaroy/challenge-api:latest"
+#}
+
+
+#resource "docker_image" "challenge-api" {
+#  name          = "data.docker_registry_image.challenge-api.name"
+#  pull_triggers = ["data.docker_registry_image.challenge-api.sha256_digest"]
+#}
+
+
+resource "docker_container" "challenge-api-server" {
+  name = "challenge-api-server"
+  image = "pradiptaroy/challenge-api"
+  restart = "always"
+  hostname = "ssh://centos@${aws_instance.centos8.public_dns}:22/" 
+  ports {
+    internal = 8080
+    external = 8080
+  }
+
+}
+
+
+
