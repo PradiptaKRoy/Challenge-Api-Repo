@@ -30,7 +30,7 @@ resource "aws_ecs_task_definition" "challenge-api-ecs-task-definition" {
     "memory": 1024,
     "cpu": 512,
     "essential": true,
-    "entryPoint": ["/"],
+    "entryPoint": ["java","-jar","/application.jar"],
     "portMappings": [
       {
         "containerPort":8080,
