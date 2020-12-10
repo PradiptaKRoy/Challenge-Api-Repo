@@ -1,5 +1,7 @@
 provider "aws" {
-  access_key = "AKIAJ3FGA5UJMMCEYRTA"
-  secret_key = "o3TkhyIyIOz6GQxYndMUpI0sOxtDxh1owzgdCZ5h"  
+  access_key = ""
+  secret_key = ""  
   region     = "us-east-1"
 }
+
+# Put your access key and secret key from AWS keypair of your account
