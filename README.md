@@ -1,5 +1,28 @@
 # Challenge-Api-Repo
 
+Steps to Run:
+
+1. Download the Github repository in your local computer.
+
+2. Create an account in AWS - Free Tier. Login to the account. 
+Goto--> User (on to the top Left Corner) --> My Security Credentials --> Access Keys (TAB) and click on "Create new Access Key" button. It will create access key and secret keys for you. Click "Show Access Key" to see and copy the Access Key and Secret Key. You should download it on to your computer.
+
+3. Open the aws_credentials.tf file and put your access key and secret key.
+
+4. Install Terraform and Docker in your local computer.
+
+5. Execute the following Terraform command :
+
+terraform init
+
+terraform apply
+
+This will create the project in aws.
+
+To delete the project execute:
+
+terraform delete
+
 How to create and setup an SSH key 
 Objective : Ensure that SSH server is configured in a such way that it will look for public parts of the SSH key both from .ssh/authorized_keys and .ssh/authorized_keys2 files
 
